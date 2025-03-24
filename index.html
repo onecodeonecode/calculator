@@ -9,116 +9,129 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
+            min-height: 100vh;
             background-color: #ffffff;
+            font-family: sans-serif;
         }
 
         .calculator {
-            background-color: #333;
-            border-radius: 10px;
+            background-color: #000000;
+            border-radius: 20px;
             padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            width: 250px; /* Adjust as needed */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            width: 300px;
         }
 
-        .display {
-            background-color: #444;
-            color: white;
+        .calculator-screen {
+            background-color: #ffffff;
+            color: black;
             padding: 10px;
             text-align: right;
-            border-radius: 5px;
+            border-radius: 10px;
             margin-bottom: 10px;
-            font-size: 30px;
-            min-height: 40px; /* Ensure space for display */
-            overflow: auto; /* Handle long expressions */
+            font-size: 2em;
+            overflow: hidden;
+            white-space: nowrap;
         }
 
-        .buttons {
+        .calculator-keys {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
+            grid-gap: 10px;
         }
 
-        .button {
-            background-color: #555;
+        .calculator-keys button {
+            background-color: #FF5733 ;
             color: white;
             border: none;
-            border-radius: 50%; /* Round buttons */
-            padding: 15px;
-            font-size: 20px;
+            border-radius: 50%;
+            padding: 20px;
+            font-size: 1.2em;
             cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            transition: background-color 0.3s;
         }
 
-        .button.operator {
-            background-color: #f9a03f; /* Orange for operators */
+        .calculator-keys button:hover {
+            background-color: #666;
         }
-        .button.clear{
+
+        .operator {
+            background-color: #ffa500;
+        }
+
+        .operator:hover {
+            background-color: #ffb326;
+        }
+        .clear{
             background-color: #a9a9a9;
         }
-
-        .button:active {
-            background-color: #777;
+        .clear:hover{
+            background-color: #c0c0c0;
+        }
+        .equals{
+            background-color: #4CBB17;
+        }
+        .equals:hover{
+            background-color: #53f553;
         }
     </style>
 </head>
 <body>
     <div class="calculator">
-        <div class="display" id="display">0</div>
-        <div class="buttons">
-            <button class="button clear" onclick="clearDisplay()">AC</button>
-            <button class="button" onclick="appendToDisplay('(')">(</button>
-            <button class="button" onclick="appendToDisplay(')')">)</button>
-            <button class="button operator" onclick="appendToDisplay('/')">÷</button>
-            <button class="button" onclick="appendToDisplay('7')">7</button>
-            <button class="button" onclick="appendToDisplay('8')">8</button>
-            <button class="button" onclick="appendToDisplay('9')">9</button>
-            <button class="button operator" onclick="appendToDisplay('*')">×</button>
-            <button class="button" onclick="appendToDisplay('4')">4</button>
-            <button class="button" onclick="appendToDisplay('5')">5</button>
-            <button class="button" onclick="appendToDisplay('6')">6</button>
-            <button class="button operator" onclick="appendToDisplay('-')">-</button>
-            <button class="button" onclick="appendToDisplay('1')">1</button>
-            <button class="button" onclick="appendToDisplay('2')">2</button>
-            <button class="button" onclick="appendToDisplay('3')">3</button>
-            <button class="button operator" onclick="appendToDisplay('+')">+</button>
-            <button class="button" onclick="appendToDisplay('0')">0</button>
-            <button class="button" onclick="appendToDisplay('.')">.</button>
-            <button class="button" onclick="appendToDisplay('%')">%</button>
-            <button class="button operator" onclick="calculate()">=</button>
+        <div class="calculator-screen" id="screen">0</div>
+        <div class="calculator-keys">
+            <button class="clear" onclick="clearScreen()">C</button>
+            <button onclick="appendToScreen('(')">(</button>
+            <button onclick="appendToScreen(')')">)</button>
+            <button class="operator" onclick="appendToScreen('/')">÷</button>
+
+            <button onclick="appendToScreen('7')">7</button>
+            <button onclick="appendToScreen('8')">8</button>
+            <button onclick="appendToScreen('9')">9</button>
+            <button class="operator" onclick="appendToScreen('*')">×</button>
+
+            <button onclick="appendToScreen('4')">4</button>
+            <button onclick="appendToScreen('5')">5</button>
+            <button onclick="appendToScreen('6')">6</button>
+            <button class="operator" onclick="appendToScreen('-')">-</button>
+
+            <button onclick="appendToScreen('1')">1</button>
+            <button onclick="appendToScreen('2')">2</button>
+            <button onclick="appendToScreen('3')">3</button>
+            <button class="operator" onclick="appendToScreen('+')">+</button>
+
+            <button onclick="appendToScreen('%')">%</button>
+            <button onclick="appendToScreen('0')">0</button>
+            <button onclick="appendToScreen('.')">.</button>
+            <button class="equals" onclick="calculate()">=</button>
         </div>
     </div>
 
     <script>
-        let display = document.getElementById('display');
+        let screen = document.getElementById('screen');
+        let currentInput = '';
 
-        function appendToDisplay(value) {
-            if (display.innerText === '0') {
-                display.innerText = value;
-            } else {
-                display.innerText += value;
-            }
+        function appendToScreen(value) {
+            currentInput += value;
+            screen.textContent = currentInput;
         }
 
-        function clearDisplay() {
-            display.innerText = '0';
+        function clearScreen() {
+            currentInput = '';
+            screen.textContent = '0';
         }
 
         function calculate() {
             try {
-                let expression = display.innerText;
-                expression = expression.replace('×', '*').replace('÷', '/'); // Replace display symbols with JS operators.
-                let result = eval(expression);
+                let result = eval(currentInput.replace('×', '*').replace('÷', '/').replace('%', '/100'));
                 if (isNaN(result) || !isFinite(result)) {
-                    display.innerText = 'Error';
+                    screen.textContent = 'Error';
                 } else {
-                    display.innerText = result;
+                    screen.textContent = result;
+                    currentInput = result.toString();
                 }
             } catch (error) {
-                display.innerText = 'Error';
+                screen.textContent = 'Error';
             }
         }
     </script>
